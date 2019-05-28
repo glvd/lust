@@ -1,8 +1,8 @@
 package lust
 
 import (
-	"github.com/giorgisio/goav/avformat"
 	"github.com/godcong/go-trait"
+	"github.com/godcong/goav"
 )
 
 var log = trait.InitGlobalZapSugar()
@@ -11,31 +11,31 @@ func Transfer() {
 	filename := "/mnt/d/video/周杰伦唱歌贼难听.mp4"
 
 	// Register all formats and codecs
-	avformat.AvRegisterAll()
+	goav.AVRegisterAll()
 
-	ctx := avformat.AvformatAllocContext()
+	ctx := goav.AVFormatAllocContext()
 
 	// Open video file
-	if avformat.AvformatOpenInput(&ctx, filename, nil, nil) != 0 {
+	if goav.AVFormatOpenInput(&ctx, filename, nil, nil) != 0 {
 		log.Info("Error: Couldn't open file.")
 		return
 	}
 
 	// Retrieve stream information
-	if ctx.AvformatFindStreamInfo(nil) < 0 {
+	if ctx.AVFormatFindStreamInfo(nil) < 0 {
 		log.Info("Error: Couldn't find stream information.")
 
 		// Close input file and free context
-		ctx.AvformatCloseInput()
+		ctx.AVFormatCloseInput()
 		return
 	}
 
 	for key, value := range ctx.Streams() {
 		log.Info(key, value)
 		parameters := value.CodecParameters()
-		log.Info("type:", parameters.AvCodecGetType() == avformat.AVMEDIA_TYPE_VIDEO)
-		log.Infof("width:%d", parameters.AvCodecGetWidth())
-		log.Infof("height:%d", parameters.AvCodecGetHeight())
+		log.Info("type:", parameters.AVCodecGetType() == goav.AVMediaTypeVideo)
+		log.Infof("width:%d", parameters.AVCodecGetWidth())
+		log.Infof("height:%d", parameters.AVCodecGetHeight())
 	}
 
 }
